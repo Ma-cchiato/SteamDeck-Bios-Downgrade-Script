@@ -1,6 +1,6 @@
 #!/bin/bash
 wget https://gitlab.com/evlaV/jupiter-hw-support/-/raw/jupiter-3.4/usr/share/jupiter_bios/F7A0110_sign.fd -O '/home/deck/F7A0110_sign.fd'
-wget http://deck.sacred.kr/SD_Unlocker -O '/home/deck/SD_Unlocker'
+wget https://github.com/Ma-cchiato/deck_bios_downgrade/raw/main/SD_Unlocker -O '/home/deck/SD_Unlocker'
 sudo chmod +x /home/deck/SD_Unlocker
 sudo steamos-readonly disable
 sudo chmod 777 /usr/share/jupiter_bios
