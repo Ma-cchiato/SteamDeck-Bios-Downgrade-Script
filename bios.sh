@@ -1,7 +1,7 @@
 #!/bin/bash
 wget https://gitlab.com/evlaV/jupiter-hw-support/-/raw/jupiter-3.4/usr/share/jupiter_bios/F7A0110_sign.fd -O '/home/deck/F7A0110_sign.fd'
 wget https://github.com/Ma-cchiato/deck_bios_downgrade/raw/main/SD_Unlocker -O '/home/deck/SD_Unlocker'
-sudo chmod +x /home/deck/SD_Unlocker
+chmod +x /home/deck/SD_Unlocker
 sudo steamos-readonly disable
 sudo rm -rf /usr/share/jupiter_bios/F7A*.fd
 sudo cp '/home/deck/F7A0110_sign.fd' '/usr/share/jupiter_bios/F7A0116_sign.fd' # For SteamOS 3.5 ~ Stable 
