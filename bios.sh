@@ -25,7 +25,7 @@ elif [ -f $Bios_File ]; then
 		rm -rf $SD_Unlocker_File
 		wget ${Link[1]} -O $Bios_File
 		wget ${Link[0]} -O $SD_Unlocker_File
-		echo "Bios File Check Complete"
+		echo "Bios File Download Complete"
 	fi
 	echo "Bios File Check Complete"
 fi
