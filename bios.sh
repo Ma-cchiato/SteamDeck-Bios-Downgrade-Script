@@ -5,6 +5,10 @@ Backup_Bios_File_Name="bios_backup.fd".$(date "+%y%m%d%H%M")
 Backup_Bios_File=/home/deck/$Backup_Bios_File_Name
 Jupiter_bios=/usr/share/jupiter_bios/
 Bios_Size=17778888   # 바이오스 파일 사이즈 (byte)
+Current_Bios_Version=`sudo dmidecode -s bios-version`
+COLOR_1="\033[1;34m"
+COLOR_2="\033[1;31m"
+COLOR_END="\033[0m"
 
 # 0 - SD_Unlocker, 1 - 110 Bios, 2 - 116 Bios, 3 - 118 Bios
 # https://gitlab.com/evlaV/jupiter-PKGBUILD#valve-official-steam-deck-jupiter-release-bios-database
@@ -24,13 +28,14 @@ elif [ $select == "2" ]; then
 elif [ $select == "3" ]; then
 	Bios_Version=${Bios_List[2]}
 else
-	echo "Process Stopped"
+	echo "Process terminated"
+	echo "No change to bios"
 	exit
 fi
 
 Bios_File=/home/deck/$Bios_Version"_sign.fd"
-
-echo "Selected Bios Version is [" $Bios_Version "]"
+echo -e "Your Current Bios Version is ["$COLOR_1 $Current_Bios_Version $COLOR_END"]"
+echo -e "Selected Bios Version is     ["$COLOR_2 $Bios_Version $COLOR_END"]"
 echo "Are you Sure? (Enter y to continue)"
 read reply
 if [ $reply == "y" ]; then
@@ -38,7 +43,8 @@ if [ $reply == "y" ]; then
 elif [ $reply == "Y" ]; then
 	continue
 else
-	echo "Process Stopped"
+	echo "Process terminated"
+	echo "No change to bios"
 	exit
 fi
 
