@@ -107,9 +107,9 @@ elif [ $Bios_Version == ${Bios_List[1]} ]; then
 	#echo "Copy "${Bios_List[1]} "Bios File to jupiter_bios ===> "${Bios_List[1]}"_sign.fd"
 	echo "Copy "${Bios_List[1]} "Bios File to jupiter_bios ===> "${Bios_List[2]}"_sign.fd"
 elif [ $Bios_Version == ${Bios_List[2]} ]; then
-	#sudo cp $Bios_File $Jupiter_bios${Bios_List[2]}"_sign.fd" # For SteamOS 3.6 
-	#echo "Copy "${Bios_List[2]} "Bios File to jupiter_bios ===> "${Bios_List[2]}"_sign.fd"
-	echo "Not Copied Bios File"
+	sudo cp $Bios_File $Jupiter_bios${Bios_List[2]}"_sign.fd" # For SteamOS 3.6 
+	echo "Copy "${Bios_List[2]} "Bios File to jupiter_bios ===> "${Bios_List[2]}"_sign.fd"
+	#echo "Not Copied Bios File"
 fi
 sudo steamos-readonly enable
 sudo $SD_Unlocker_File
