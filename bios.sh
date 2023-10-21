@@ -98,8 +98,8 @@ downloaded=false
 
 for ((try = 1; try <= max_download_try; try++)); do
     if [ ! -f "$Bios_File" ] || [ ! $(stat -c %s "$Bios_File") -eq $Bios_Size ]; then
-        echo "Downloading Bios File... (Try $try)"
-        log "Downloading Bios File (Try $try)"
+        echo "Unable to verify file. Downloading Bios File... (Try $try)"
+        log "Unable to verify file. Bios File is missing or Bios File size is different. (Try $try)"
         rm -rf "$Bios_File"
         rm -rf "$SD_Unlocker_File"
         wget "${Link[0]}" -O "$SD_Unlocker_File"
