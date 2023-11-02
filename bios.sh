@@ -2,7 +2,7 @@
 
 SD_Unlocker_File=/home/deck/SD_Unlocker
 Current_Bios_Version=`sudo dmidecode -s bios-version`
-Backup_Bios_File_Name="bios_backup_$Current_Bios_Version.fd".$(date "+%y%m%d%H%M")
+Backup_Bios_File_Name="bios_backup_$Current_Bios_Version.bin".$(date "+%y%m%d%H%M")
 Backup_Bios_File=/home/deck/$Backup_Bios_File_Name
 Jupiter_bios=/usr/share/jupiter_bios/
 Bios_Size=17778888   # 바이오스 파일 사이즈 (byte)
