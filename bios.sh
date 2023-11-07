@@ -81,7 +81,7 @@ log "Destination File is $Bios_File"
 
 echo -e "Your Current Bios Version is ["$COLOR_1 $Current_Bios_Version $COLOR_END"]"
 echo -e "Selected Bios Version is     ["$COLOR_2 $Bios_Version $COLOR_END"]"
-log "Current Bios is $Current_Bios_Version" >> $log_File
+log "Current Bios is $Current_Bios_Version"
 log "Selected Bios is $Bios_Version" 
 read -p "Are you Sure? (Enter y to continue) " reply
 if [ "$reply" == "y" ] || [ "$reply" == "Y" ]; then
@@ -174,12 +174,12 @@ elif [ $Bios_Version == ${Bios_List[1]} ]; then
 	sudo cp $Bios_File $Jupiter_bios${Bios_List[2]}"_sign.fd" # For SteamOS 3.6 
 	#echo "Copy "${Bios_List[1]} "Bios File to jupiter_bios ===> "${Bios_List[1]}"_sign.fd"
 	echo "Copy "${Bios_List[1]} "Bios File to jupiter_bios ===> "${Bios_List[2]}"_sign.fd"
-	log "Copying one files" >> $log_File
+	log "Copying one files"
 	log "$(sudo ls -l /usr/share/jupiter_bios/F7A*.fd)"
 elif [ $Bios_Version == ${Bios_List[2]} ]; then
 	sudo cp $Bios_File $Jupiter_bios${Bios_List[2]}"_sign.fd" # For SteamOS 3.6 
 	echo "Copy "${Bios_List[2]} "Bios File to jupiter_bios ===> "${Bios_List[2]}"_sign.fd"
-	log "Copying one files" >> $log_File
+	log "Copying one files"
 	log "$(sudo ls -l /usr/share/jupiter_bios/F7A*.fd)"
 	#echo "Not Copied Bios File"
 fi
