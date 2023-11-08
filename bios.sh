@@ -10,12 +10,65 @@ COLOR_1="\033[1;34m"
 COLOR_2="\033[1;31m"
 COLOR_END="\033[0m"
 
+# 0 - SD_Unlocker, 1 - 110 Bios, 2 - 116 Bios, 3 - 118 Bios
+# https://gitlab.com/evlaV/jupiter-PKGBUILD#valve-official-steam-deck-jupiter-release-bios-database
+Link=("https://github.com/Ma-cchiato/deck_bios_downgrade/raw/main/SD_Unlocker" "https://gitlab.com/evlaV/jupiter-hw-support/-/raw/0660b2a5a9df3bd97751fe79c55859e3b77aec7d/usr/share/jupiter_bios/F7A0110_sign.fd"
+"https://gitlab.com/evlaV/jupiter-hw-support/-/raw/38f7bdc2676421ee11104926609b4cc7a4dbc6a3/usr/share/jupiter_bios/F7A0116_sign.fd"
+"https://gitlab.com/evlaV/jupiter-hw-support/-/raw/f79ccd15f68e915cc02537854c3b37f1a04be9c3/usr/share/jupiter_bios/F7A0118_sign.fd"
+"https://gitlab.com/evlaV/jupiter-hw-support/-/raw/bc5ca4c3fc739d09e766a623efd3d98fac308b3e/usr/share/jupiter_bios/F7A0119_sign.fd")
+
+Bios_List=("F7A0110" "F7A0116" "F7A0118" "F7A0119")
+
+log() {
+    local log_msg="$1"
+    if [ "$log_enabled" = true ]; then
+        if [ -n "$log_File" ]; then
+            echo "$log_msg" >> "$log_File"
+        else
+            echo "$log_msg" >> /dev/null
+        fi
+    fi
+}
+
+# Function to perform BIOS backup
+perform_bios_backup() {
+    if [ ! -f $Backup_Bios_File ]; then
+		# 기존 바이오스 백업, 복구 가이드는 https://gall.dcinside.com/mgallery/board/view/?id=steamdeck&no=91558 참고
+		# If you're debugging, comment out the following lines (to save testing time)
+		sudo /usr/share/jupiter_bios_updater/h2offt $Backup_Bios_File -O
+		if [ -f $Backup_Bios_File ]; then
+			log "Bios Backup File: $Backup_Bios_File"
+			echo "바이오스 백업 파일 생성 완료 ===>" $Backup_Bios_File_Name
+			echo "바이오스 백업 파일 생성 완료 ===>" $Backup_Bios_File_Name
+		else
+			log "Failed to create Bios Backup File"
+			echo "바이오스 백업 파일 생성 실패"
+			echo "바이오스 백업 파일 생성 실패"
+		fi
+	fi
+}
+
+# Function to install SD Unlocker
+install_sd_unlocker() {
+	testv="F7A0119"
+	log "Bios Version: $Current_Bios_Version"
+	echo "Bios Version: $Current_Bios_Version"
+    if [ $Current_Bios_Version == ${Bios_List[0]} ]||[ $Current_Bios_Version == ${Bios_List[1]} ]; then
+		log "Install SD Unlocker"
+		sudo $SD_Unlocker_File
+		echo "SD_Unlocker is Installed"
+	else
+		log "Not install SD Unlocker (Bios Version is 118 or Up)"
+		echo "SD_Unlocker is Not Installed (Bios Version is 118 or Up)"
+	fi
+}
+
 # Logging is disabled by default
 log_enabled=false
 log_File=""
 
 # logging enable option is -l
-while getopts "l" opt; do
+while getopts "lbs" opt; do
   case $opt in
     l)
       log_enabled=true
@@ -30,35 +83,23 @@ while getopts "l" opt; do
 	  echo -e "\nbios downgrader log" >> $log_File
 	  echo -e "Run Time: $(date "+%Y-%m-%d %H:%M:%S")\n" >> $log_File
       ;;
-    \?)
+    b)
+      perform_bios_backup
+      exit 0
+      ;;
+    s)
+      install_sd_unlocker
+      exit 0
+      ;;
+	\?)
       echo "Invalid option: -$OPTARG" >&2
       exit 1
       ;;
   esac
 done
 
-
-log() {
-    local log_msg="$1"
-    if [ "$log_enabled" = true ]; then
-        if [ -n "$log_File" ]; then
-            echo "$log_msg" >> "$log_File"
-        else
-            echo "$log_msg" >> /dev/null
-        fi
-    fi
-}
-
-# 0 - SD_Unlocker, 1 - 110 Bios, 2 - 116 Bios, 3 - 118 Bios
-# https://gitlab.com/evlaV/jupiter-PKGBUILD#valve-official-steam-deck-jupiter-release-bios-database
-Link=("https://github.com/Ma-cchiato/deck_bios_downgrade/raw/main/SD_Unlocker" "https://gitlab.com/evlaV/jupiter-hw-support/-/raw/0660b2a5a9df3bd97751fe79c55859e3b77aec7d/usr/share/jupiter_bios/F7A0110_sign.fd"
-"https://gitlab.com/evlaV/jupiter-hw-support/-/raw/38f7bdc2676421ee11104926609b4cc7a4dbc6a3/usr/share/jupiter_bios/F7A0116_sign.fd"
-"https://gitlab.com/evlaV/jupiter-hw-support/-/raw/f79ccd15f68e915cc02537854c3b37f1a04be9c3/usr/share/jupiter_bios/F7A0118_sign.fd")
-
-Bios_List=("F7A0110" "F7A0116" "F7A0118")
-
 echo "           Select Bios Version" 
-echo "[1] " ${Bios_List[0]} " [2] " ${Bios_List[1]} " [3] " ${Bios_List[2]} 
+echo "[1] " ${Bios_List[0]} " [2] " ${Bios_List[1]} " [3] " ${Bios_List[2]} #" [4] " ${Bios_List[3]} 
 read -p "==> " select
 if [ $select == "1" ]; then
 	Bios_Version=${Bios_List[0]}
@@ -69,6 +110,9 @@ elif [ $select == "2" ]; then
 elif [ $select == "3" ]; then
 	Bios_Version=${Bios_List[2]}
 	log "$Bios_Version Bios select" 
+#elif [ $select == "4" ]; then
+#	Bios_Version=${Bios_List[3]}
+#	log "$Bios_Version Bios select"
 else
 	log "Decline Bios Select: $select" 
 	echo "Process terminated"
@@ -112,6 +156,9 @@ for ((try = 1; try <= max_download_try; try++)); do
         elif [ "$Bios_Version" == "${Bios_List[2]}" ]; then
             log "Downloading Bios File ==> $Bios_File"
 			wget "${Link[3]}" -O "$Bios_File"
+        #elif [ "$Bios_Version" == "${Bios_List[3]}" ]; then
+        #    log "Downloading Bios File ==> $Bios_File"
+		#	wget "${Link[4]}" -O "$Bios_File"
         fi
         if [ -f "$Bios_File" ] && [ $(stat -c %s "$Bios_File") -eq $Bios_Size ]; then
             downloaded=true
@@ -139,21 +186,7 @@ fi
 echo "Bios File Check Complete ===> [$Bios_File]"
 log "Bios File Checked: $Bios_File, $(stat -c %s $Bios_File)"
 
-
-if [ ! -f $Backup_Bios_File ]; then
-	# 기존 바이오스 백업, 복구 가이드는 https://gall.dcinside.com/mgallery/board/view/?id=steamdeck&no=91558 참고
-	# If you're debugging, comment out the following lines (to save testing time)
-	sudo /usr/share/jupiter_bios_updater/h2offt $Backup_Bios_File -O
-	if [ -f $Backup_Bios_File ]; then
-		log "Bios Backup File: $Backup_Bios_File"
-		echo "바이오스 백업 파일 생성 완료 ===>" $Backup_Bios_File_Name
-		echo "바이오스 백업 파일 생성 완료 ===>" $Backup_Bios_File_Name
-	else
-		log "Failed to create Bios Backup File"
-		echo "바이오스 백업 파일 생성 실패"
-		echo "바이오스 백업 파일 생성 실패"
-	fi
-fi
+perform_bios_backup
 
 sudo chmod +x $SD_Unlocker_File
 sudo steamos-readonly disable
@@ -182,17 +215,18 @@ elif [ $Bios_Version == ${Bios_List[2]} ]; then
 	log "Copying one files"
 	log "$(sudo ls -l /usr/share/jupiter_bios/F7A*.fd)"
 	#echo "Not Copied Bios File"
+#elif [ $Bios_Version == ${Bios_List[3]} ]; then
+#	sudo cp $Bios_File $Jupiter_bios${Bios_List[3]}"_sign.fd" # For SteamOS 3.6 
+#	echo "Copy "${Bios_List[3]} "Bios File to jupiter_bios ===> "${Bios_List[3]}"_sign.fd"
+#	log "Copying one files"
+#	log "$(sudo ls -l /usr/share/jupiter_bios/F7A*.fd)"
+	#echo "Not Copied Bios File"
 fi
 sudo steamos-readonly enable
 log "Steam OS Read Only: Enable"
-if [ ! $Bios_Version == ${Bios_List[2]} ]; then
-	sudo $SD_Unlocker_File
-	echo "SD_Unlocker is Installed"
-	log "Install SD Unlocker"
-else
-	echo "SD_Unlocker is Not Installed"
-	log "Not install SD Unlocker (Bios Version is 118 or Up)"
-fi
+
+install_sd_unlocker
+
 log "$(sudo /usr/share/jupiter_bios_updater/h2offt -SC)"
 log "Update Bios Information.. [ Update to $Bios_Version, Use File: $Bios_File ]"
 # If you're debugging, comment out the following lines (to save testing time)
