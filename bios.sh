@@ -86,7 +86,7 @@ fi
 perform_bios_backup() {
 if [ ! -f $Backup_Bios_File ]; then
 echo -e "\n======================================"
-echo -e "Start a bios backup\nEnding a bios backup"
+echo -e "Start a bios backup\n"
 # 기존 바이오스 백업, 복구 가이드는 https://gall.dcinside.com/mgallery/board/view/?id=steamdeck&no=91558 참고
 # If you're debugging, comment out the following lines (to save testing time)
 sudo /usr/share/jupiter_bios_updater/h2offt $Backup_Bios_File -O
