@@ -99,7 +99,7 @@ if [ ! -f $jupiter_Unlock_File ] || [ ! -f $jupiter_tool ]; then
 	log "Downloading jupiter_bios_tool file ==> $jupiter_tool"
 	wget "${Link_t[1]}" -O "$jupiter_tool"
 else
-	echo "jipiter unlock file, jupiter bios tool is already downloaded"
+	echo "jupiter unlock file, jupiter bios tool is already downloaded"
 fi
 
 echo -e "\n" 
@@ -113,7 +113,7 @@ read -p "==> " b_opt
 
 if [ $b_opt == "1" ]; then
 	log "Tool $b_opt select"
-	if [ -f Backup_Bios_File ]; then
+	if [ -f $Backup_Bios_File ]; then
 		selected_bios=${Backup_Bios_File}
 		echo $selected_bios
 	else
@@ -128,7 +128,7 @@ if [ $b_opt == "1" ]; then
 
 elif [ $b_opt == "2" ]; then
 	log "Tool $b_opt select"
-	if [ -f Backup_Bios_File ]; then
+	if [ -f $Backup_Bios_File ]; then
 		selected_bios=${Backup_Bios_File}
 		echo $selected_bios
 	else
@@ -138,7 +138,7 @@ elif [ $b_opt == "2" ]; then
 
 elif [ $b_opt == "3" ]; then
 	log "Tool $b_opt select"
-	if [ -f Backup_Bios_File ]; then
+	if [ -f $Backup_Bios_File ]; then
 		selected_bios=${Backup_Bios_File}
 		echo $selected_bios
 	else
@@ -148,7 +148,7 @@ elif [ $b_opt == "3" ]; then
 
 elif [ $b_opt == "4" ]; then
 	log "Tool $b_opt select"
-	if [ -f Backup_Bios_File ]; then
+	if [ -f $Backup_Bios_File ]; then
 		selected_bios=${Backup_Bios_File}
 		echo $selected_bios
 	else
@@ -158,7 +158,7 @@ elif [ $b_opt == "4" ]; then
 
 elif [ $b_opt == "5" ]; then
 	log "Tool $b_opt select"
-	if [ -f Backup_Bios_File ]; then
+	if [ -f $Backup_Bios_File ]; then
 		selected_bios=${Backup_Bios_File}
 		echo $selected_bios
 	else
@@ -172,7 +172,7 @@ elif [ $b_opt == "6" ]; then
 
 elif [ $b_opt == "7" ]; then
 	log "Tool $b_opt select"
-	if [ -f Backup_Bios_File ]; then
+	if [ -f $Backup_Bios_File ]; then
 		selected_bios=${Backup_Bios_File}
 		echo $selected_bios
 	else
