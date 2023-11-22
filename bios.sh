@@ -120,7 +120,7 @@ if [ $b_opt == "1" ]; then
 		find_bios_file
 	fi
 	if [[ "${Current_Bios_Version}" == *"F7A"* ]] || [ "$apu_name" == "Aerith" ]; then
-		python $jupiter_tool $find_result $find_result.UID_backup.bin -b --F7A
+		python $jupiter_tool $selected_bios $selected_bios.UID_backup.bin -b --F7A
 	elif [[ "${Current_Bios_Version}" == *"F7G"* ]] || [ "$apu_name" == "Sephiroth" ]; then
 		echo $selected_bios
 		python $jupiter_tool $selected_bios -b $selected_bios.UID_backup.bin
