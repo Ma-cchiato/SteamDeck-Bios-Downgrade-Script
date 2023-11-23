@@ -29,10 +29,25 @@ Link_l=("https://gitlab.com/evlaV/jupiter-hw-support/-/raw/0660b2a5a9df3bd97751f
 
 Link_o=("https://gitlab.com/evlaV/jupiter-hw-support/-/raw/332fcc2fbfcb3a2a31bba5363c0b22cdc1f66822/usr/share/jupiter_bios/F7G0105_sign.fd")
 
-Link_t=("https://gitlab.com/evlaV/jupiter-PKGBUILD/-/raw/master/bin/jupiter-bios-unlock" "https://gitlab.com/evlaV/jupiter-PKGBUILD/-/raw/master/jupiter-bios-tool.py?inline=false")
+Link_t=("https://gitlab.com/evlaV/jupiter-PKGBUILD/-/raw/master/bin/jupiter-bios-unlock" 
+"https://gitlab.com/evlaV/jupiter-PKGBUILD/-/raw/master/jupiter-bios-tool.py?inline=false")
 
+# supported bios list
 Bios_lcd=("F7A0110" "F7A0116" "F7A0118" "F7A0119")
 Bios_oled=("F7G0105")
+
+# check latest lcd bios length
+len_lcd="${#Bios_lcd[@]}"
+latest_lcd=$((len_lcd-1))
+#echo $latest_lcd
+
+# check latest oled bios length
+len_oled="${#Bios_oled[@]}"
+latest_oled=$((len_oled-1))
+#echo $latest_oled
+
+jupiter_tool_menu=("BACKUP_UID_TO_FILE" "GENERATE_UID_TO_FILE" "INJECT_UID_FROM_FILE" "REMOVE_UID_FROM_FILE" "TRIMMING" "ANALYZE/VERIFY_FILE" "CONTINUE" "TERMINATE" "HELP")
+
 Device_List=("Steam Deck LCD" "Steam Deck OLED")
 device_flag=0
 
@@ -64,17 +79,15 @@ echo -e "Run Time: $(date "+%Y-%m-%d %H:%M:%S")\n" >> $log_File
 
 
 check_model() {
+#echo $Current_Bios_Version
+#echo $apu_name
 if [[ "${Current_Bios_Version}" == *"F7A"* ]] || [ "$apu_name" == "Aerith" ]; then
-	#echo $Current_Bios_Version
-	#echo $apu_name
 	current_device=${Device_List[0]}
 	echo -e "\nYour device is $current_device."
 	echo -e "\n"
 	log "Device is ${current_device}"
 	device_flag=1
 elif [[ "${Current_Bios_Version}" == *"F7G"* ]] || [ "$apu_name" == "Sephiroth" ]; then
-	#echo $Current_Bios_Version
-	#echo $apu_name
 	current_device=${Device_List[1]}
 	echo -e "\nYour device is ${current_device}."
 	echo -e "${current_device} models are still in testing.\n"
@@ -98,95 +111,159 @@ if [ ! -f $jupiter_Unlock_File ] || [ ! -f $jupiter_tool ]; then
 	wget "${Link_t[0]}" -O "$jupiter_Unlock_File"
 	log "Downloading jupiter_bios_tool file ==> $jupiter_tool"
 	wget "${Link_t[1]}" -O "$jupiter_tool"
+	chmod +x $jupiter_Unlock_File
+	chmod +x $jupiter_tool
 else
-	echo "jupiter unlock file, jupiter bios tool is already downloaded"
+	log "$jupiter_Unlock_File, $jupiter_tool"
+	echo "File verification complete"
 fi
 
 echo -e "\n" 
 echo -e "     Select the jupiter Bios Tool Option\n" 
-echo "[1] BACKUP_UID_TO_FILE   [2] GENERATE_UID_TO_FILE"
-echo "[3] INJECT_UID_FROM_FILE [4] REMOVE_UID_FROM_FILE"
-echo "[5] TRIMMING             [6] HELP"
-echo "[7] Analyze/Verify BIOS  [8] EXIT/PASS"
+echo "[1] ${jupiter_tool_menu[0]}   [2] ${jupiter_tool_menu[1]}"
+echo "[3] ${jupiter_tool_menu[2]} [4] ${jupiter_tool_menu[3]}"
+echo "[5] ${jupiter_tool_menu[4]}             [6] ${jupiter_tool_menu[5]}"
+if [ $use_tool == 1 ]; then
+	echo "[X] NOT USED             [8] ${jupiter_tool_menu[7]}"
+	echo "[9] ${jupiter_tool_menu[8]}"
+else
+	echo "[7] ${jupiter_tool_menu[6]}             [8] ${jupiter_tool_menu[7]}"
+	echo "[9] ${jupiter_tool_menu[8]}"
+fi
 echo -e "\n"
 read -p "==> " b_opt
+    
+if [[ $b_opt =~ ^[1-9]$ ]]; then
+	if [ $b_opt == "1" ]; then
+		log "Tool $b_opt select"
+		#if [ -f $Backup_Bios_File ]; then
+		#	log "${Backup_Bios_File}"
+		#	selected_bios=${Backup_Bios_File}
+		#else
+			find_bios_file
+		#fi
+		log "$jupiter_tool $selected_bios -b $selected_bios-UID_backup.bin"
+		python $jupiter_tool $selected_bios -b $selected_bios-UID_backup.bin
+		if [ -f "$selected_bios-UID_backup.bin" ]; then
+			log "UID backup file created: $selected_bios-UID_backup.bin"
+			echo "UID backup file created: $selected_bios-UID_backup.bin"
+		else
+			log "Failed to create UID-backup file"
+			echo "Failed to create UID-backup file"
+		fi
+		echo -e "========================\n"
+		jupiter_tool
+		return
 
-if [ $b_opt == "1" ]; then
-	log "Tool $b_opt select"
-	if [ -f $Backup_Bios_File ]; then
-		selected_bios=${Backup_Bios_File}
-		echo $selected_bios
-	else
+	elif [ $b_opt == "2" ]; then
+		log "Tool $b_opt select"
+		if [[ "${Current_Bios_Version}" == *"F7A"* ]] || [ "$apu_name" == "Aerith" ]; then
+			log "$jupiter_tool -g "/home/deck/UID_generated_F7A_$(date "+%y%m%d").bin" --F7A"
+			python $jupiter_tool -g "/home/deck/UID_generated_F7A_$(date "+%y%m%d").bin" --F7A
+			if [ -f "/home/deck/UID_generated_F7A_$(date "+%y%m%d").bin" ]; then
+				log "UID file generated: /home/deck/UID_generated_F7A_$(date "+%y%m%d").bin"
+				echo "UID file generated: /home/deck/UID_generated_F7A_$(date "+%y%m%d").bin"
+			else
+				log "Failed to generate-UID file"
+				echo "Failed to generate-UID file"
+			fi
+		elif [[ "${Current_Bios_Version}" == *"F7G"* ]] || [ "$apu_name" == "Sephiroth" ]; then
+			log "$jupiter_tool -g "/home/deck/UID_generated_F7G_$(date "+%y%m%d").bin""
+			python $jupiter_tool -g "/home/deck/UID_generated_F7G_$(date "+%y%m%d").bin"
+			if [ -f "/home/deck/UID_generated_F7G_$(date "+%y%m%d").bin" ]; then
+				log "UID file generated: /home/deck/UID_generated_F7G_$(date "+%y%m%d").bin"
+				echo "UID file generated: /home/deck/UID_generated_F7G_$(date "+%y%m%d").bin"
+			else
+				log "Failed to generate-UID file"
+				echo "Failed to generate-UID file"
+			fi
+		fi
+		echo -e "========================\n"
+		jupiter_tool
+		return
+
+	elif [ $b_opt == "3" ]; then
+		log "Tool $b_opt select"
 		find_bios_file
-	fi
-	if [[ "${Current_Bios_Version}" == *"F7A"* ]] || [ "$apu_name" == "Aerith" ]; then
-		python $jupiter_tool $selected_bios $selected_bios.UID_backup.bin -b --F7A
-	elif [[ "${Current_Bios_Version}" == *"F7G"* ]] || [ "$apu_name" == "Sephiroth" ]; then
-		echo $selected_bios
-		python $jupiter_tool $selected_bios -b $selected_bios.UID_backup.bin
-	fi
+		python $jupiter_tool $selected_bios $selected_bios-UID_injected.bin -i $sel_inject_uid
+		if [ -f "$selected_bios-UID_injected.bin" ]; then
+			log "UID-injected bios file created: $selected_bios-UID_injected.bin"
+			echo "UID-injected bios file created: $selected_bios-UID_injected.bin"
+		else
+			log "Failed to create UID-injected Bios file"
+			echo "Failed to create UID-injected Bios file"
+		fi
+		echo -e "========================\n"
+		jupiter_tool
+		return
 
-elif [ $b_opt == "2" ]; then
-	log "Tool $b_opt select"
-	if [ -f $Backup_Bios_File ]; then
-		selected_bios=${Backup_Bios_File}
-		echo $selected_bios
-	else
+	elif [ $b_opt == "4" ]; then
+		log "Tool $b_opt select"
 		find_bios_file
-	fi
-	python $jupiter_tool -g $selected_bios-UID_generated.bin
+		python $jupiter_tool $selected_bios $selected_bios-UID_removed.bin -r
+		if [ -f "$selected_bios-UID_removed.bin" ]; then
+			log "File created with UID-removed from bios file: $selected_bios-UID_removed.bin"
+			echo "File created with UID-removed from bios file: $selected_bios-UID_removed.bin"
+		else
+			log "Failed to create UID-removed Bios file"
+			echo "Failed to create UID-removed Bios file"
+		fi
+		echo -e "========================\n"
+		jupiter_tool
+		return
 
-elif [ $b_opt == "3" ]; then
-	log "Tool $b_opt select"
-	if [ -f $Backup_Bios_File ]; then
-		selected_bios=${Backup_Bios_File}
-		echo $selected_bios
-	else
+	elif [ $b_opt == "5" ]; then
+		log "Tool $b_opt select"
 		find_bios_file
-	fi
-	python $jupiter_tool $selected_bios $selected_bios-UID_injected.bin -i $sel_inject_uid
+		python $jupiter_tool $selected_bios $selected_bios-trimmed.bin
+		if [ -f "$selected_bios-UID_removed.bin" ]; then
+			log "Trimmed bios file created: $selected_bios-trimmed.bin"
+			echo "Trimmed bios file created: $selected_bios-trimmed.bin"
+		else
+			log "Failed to trim the bios file"
+			echo "Failed to trim the bios file"
+		fi
+		echo -e "========================\n"
+		jupiter_tool
+		return
 
-elif [ $b_opt == "4" ]; then
-	log "Tool $b_opt select"
-	if [ -f $Backup_Bios_File ]; then
-		selected_bios=${Backup_Bios_File}
-		echo $selected_bios
-	else
+	elif [ $b_opt == "6" ]; then
+		log "Tool $b_opt select"
 		find_bios_file
+		python $jupiter_tool $selected_bios
+		echo -e "========================\n"
+		jupiter_tool
+		return
+
+	elif [ $b_opt == "7" ]; then
+		log "Tool $b_opt select"
+		if [ $use_tool == 1 ]; then
+			log "terminated reason: Run with the -t option"
+			echo "jupiter bios tool terminated"
+			echo "terminated reason: Run with the -t option"
+			exit 0
+		else
+			log "The entire script is running. Continue the script."
+			echo "Continue the script."
+		fi
+
+	elif [ $b_opt == "8" ]; then
+		log "Tool $b_opt select"
+		log "jupiter bios tool terminated"
+		echo "jupiter bios tool terminated"
+		exit 0
+
+	elif [ $b_opt == "9" ]; then
+		log "Tool $b_opt select"
+		python $jupiter_tool -h
+		echo -e "========================\n"
+		jupiter_tool
+		return
 	fi
-	python $jupiter_tool $selected_bios $selected_bios-UID_removed.bin -r
-
-elif [ $b_opt == "5" ]; then
-	log "Tool $b_opt select"
-	if [ -f $Backup_Bios_File ]; then
-		selected_bios=${Backup_Bios_File}
-		echo $selected_bios
-	else
-		find_bios_file
-	fi
-	python $jupiter_tool $selected_bios $selected_bios-trimmed.bin
-
-elif [ $b_opt == "6" ]; then
-	log "Tool $b_opt select"
-	python $jupiter_tool -h
-
-elif [ $b_opt == "7" ]; then
-	log "Tool $b_opt select"
-	if [ -f $Backup_Bios_File ]; then
-		selected_bios=${Backup_Bios_File}
-		echo $selected_bios
-	else
-		find_bios_file
-	fi
-	python $jupiter_tool $selected_bios
-
-elif [ $b_opt == "8" ]; then
-	echo "jupiter bios tool terminated"
-
 else
-	log "Decline jupiter Bios Tool Option Select: $b_opt" 
-	echo "jupiter bios tool terminated"
-	exit 1
+	echo -e "\nInvalid selection. Please enter a valid index.\n"
+	jupiter_tool 
+	return
 fi
 
 }
@@ -235,6 +312,12 @@ fi
 
 find_bios_file () {
 
+unset $find_result
+
+
+echo -e "\n"
+echo -e "Search the /home/deck directory for files with the .rom, .fd, .bin extensions.\n"
+echo -e "Reslut\n"
 # Find bios files with .rom, .fd, .bin extensions
 find_result=($(find /home/deck -maxdepth 1 -type f \( -name "*.rom" -o -name "*.fd" -o -name "*.bin" \)))
 
@@ -244,6 +327,7 @@ for ((i=0; i<${#find_result[@]}; i++)); do
 done
 
 # Prompt user to select a BIOS file
+echo -e "\n"
 read -p "Select Source Bios file Number... " sel_bios_number
 
 # Check if the input is a valid number
@@ -252,18 +336,22 @@ if [[ $sel_bios_number =~ ^[0-9]+$ ]]; then
     
     # Check if the index is valid
     if ((index >= 0 && index < ${#find_result[@]})); then
-      selected_bios=${find_result[index]}
-      echo "You selected: $selected_bios"
+    	selected_bios=${find_result[index]}
+    	echo "Selected File: $selected_bios"
     else
-      echo "Invalid selection. Please enter a valid index."
+    	echo "Invalid selection. Please enter a valid index."
+		find_bios_file
+		return
     fi
 else
     echo "Invalid input. Please enter a number."
+	find_bios_file
+	return
 fi
 
 # If the user chooses option 3, prompt for another selection
 if [ $b_opt == "3" ]; then
-    read -p "Select Source Bios file Number... " sel_inject_uid_number
+    read -p "Select a file number to inject... " sel_inject_uid_number
 
     # Check if the input is a valid number
     if [[ $sel_inject_uid_number =~ ^[0-9]+$ ]]; then
@@ -272,7 +360,7 @@ if [ $b_opt == "3" ]; then
       # Check if the index is valid
       if ((index >= 0 && index < ${#find_result[@]})); then
         sel_inject_uid=${find_result[index]}
-        echo "Selected BIOS file for injection: $sel_inject_uid"
+        echo "Selected file for injection: $sel_inject_uid"
       else
         echo "Invalid selection. Please enter a valid index."
         exit 1
@@ -281,6 +369,59 @@ if [ $b_opt == "3" ]; then
       echo "Invalid input. Please enter a number."
       exit 1
     fi
+fi
+}
+
+select_bios () {
+echo "           Select Bios Version" 
+if [ $device_flag == 1 ];then
+	echo "[1] " ${Bios_lcd[0]} " [2] " ${Bios_lcd[1]} " [3] " ${Bios_lcd[2]} " [4] " ${Bios_lcd[3]} 
+	read -p "==> " select
+	if [[ $select =~ ^[1-9]$ ]]; then
+		if [ $select == "1" ]; then
+			Bios_Version=${Bios_lcd[0]}
+			log "$Bios_Version Bios select" 
+		elif [ $select == "2" ]; then
+			Bios_Version=${Bios_lcd[1]}
+			log "$Bios_Version Bios select" 
+		elif [ $select == "3" ]; then
+			Bios_Version=${Bios_lcd[2]}
+			log "$Bios_Version Bios select" 
+		elif [ $select == "4" ]; then
+			Bios_Version=${Bios_lcd[3]}
+			log "$Bios_Version Bios select"
+		else
+			log "Decline Bios Select: $select" 
+			echo "Process terminated"
+			echo "No change to bios"
+			exit 1
+		fi
+	else
+		echo -e "\n Invalid selection. Please enter a valid index.\n"
+		select_bios 
+	return
+fi	
+elif [ $device_flag == 2 ];then
+	echo "[1] " ${Bios_oled[0]} 
+	read -p "==> " select
+	if [[ $select =~ ^[1-9]$ ]]; then
+		if [ $select == "1" ]; then
+			Bios_Version=${Bios_oled[0]}
+			log "$Bios_Version Bios select" 
+		else
+			log "Decline Bios Select: $select" 
+			echo "Process terminated"
+			echo "No change to bios"
+			exit 1
+		fi
+	else
+		echo -e "\nInvalid selection. Please enter a valid index.\n"
+		select_bios 
+	return
+fi
+else
+	echo "Failed to Check (Unknown device flag)"
+	log "Failed to Check (Unknown device flag)"
 fi
 }
 
@@ -363,44 +504,7 @@ done
 # Check if it is an LCD model
 check_model
 
-echo "           Select Bios Version" 
-if [ $device_flag == 1 ];then
-	echo "[1] " ${Bios_lcd[0]} " [2] " ${Bios_lcd[1]} " [3] " ${Bios_lcd[2]} " [4] " ${Bios_lcd[3]} 
-	read -p "==> " select
-	if [ $select == "1" ]; then
-		Bios_Version=${Bios_lcd[0]}
-		log "$Bios_Version Bios select" 
-	elif [ $select == "2" ]; then
-		Bios_Version=${Bios_lcd[1]}
-		log "$Bios_Version Bios select" 
-	elif [ $select == "3" ]; then
-		Bios_Version=${Bios_lcd[2]}
-		log "$Bios_Version Bios select" 
-	elif [ $select == "4" ]; then
-		Bios_Version=${Bios_lcd[3]}
-		log "$Bios_Version Bios select"
-	else
-		log "Decline Bios Select: $select" 
-		echo "Process terminated"
-		echo "No change to bios"
-		exit 1
-	fi
-elif [ $device_flag == 2 ];then
-	echo "[1] " ${Bios_oled[0]} 
-	read -p "==> " select
-	if [ $select == "1" ]; then
-		Bios_Version=${Bios_oled[0]}
-		log "$Bios_Version Bios select" 
-	else
-		log "Decline Bios Select: $select" 
-		echo "Process terminated"
-		echo "No change to bios"
-		exit 1
-	fi
-else
-	echo "Failed to Check (Unknown device flag)"
-	log "Failed to Check (Unknown device flag)"
-fi
+select_bios
 
 Bios_File=/home/deck/$Bios_Version"_sign.fd"
 log "Destination File is $Bios_File"
@@ -495,46 +599,41 @@ perform_bios_backup
 sudo steamos-readonly disable
 log "Steam OS Read Only: Disable"
 if [ $device_flag == 1 ];then
-	#sudo chmod +x $Jupiter_Unlock_File
-	sudo chmod +x $SD_Unlocker_File
+	sudo chmod +x $jupiter_Unlock_File
 	jupiter_unlock
 	log "$(sudo ls -l /usr/share/jupiter_bios/F7A*.fd)"
 	sudo rm -rf /usr/share/jupiter_bios/F7A*.fd
-#elif [ $device_flag == 2 ];then
-#	log "$(sudo ls -l /usr/share/jupiter_bios/F7G*.fd)"
-#	sudo rm -rf /usr/share/jupiter_bios/F7G*.fd
+elif [ $device_flag == 2 ];then
+	log "$(sudo ls -l /usr/share/jupiter_bios/F7G*.fd)"
+	sudo rm -rf /usr/share/jupiter_bios/F7G*.fd
 fi
 log "$(sudo ls -l /usr/share/jupiter_bios/) << If count is zero, the delete was successful."
 echo "Delete Old Bios File From jupiter_bios"
 if [ $Bios_Version == ${Bios_lcd[0]} ]; then
-	sudo cp $Bios_File $jupiter_bios${Bios_lcd[1]}"_sign.fd" # For SteamOS 3.5 ~ Stable 
-	sudo cp $Bios_File $jupiter_bios${Bios_lcd[2]}"_sign.fd" # For SteamOS 3.6 
-	echo "Copy "${Bios_lcd[0]} "Bios File to jupiter_bios ===> "${Bios_lcd[1]}"_sign.fd"
-	echo "Copy "${Bios_lcd[0]} "Bios File to jupiter_bios ===> "${Bios_lcd[2]}"_sign.fd"
-	log "Copying two files"
+	sudo cp $Bios_File $jupiter_bios${Bios_lcd[$latest_lcd]}"_sign.fd" # 
+	echo "Copy "${Bios_lcd[$latest_lcd]} "Bios File to jupiter_bios ===> "${Bios_lcd[$latest_lcd]}"_sign.fd"
+	log "Copying files"
 	log "$(sudo ls -l /usr/share/jupiter_bios/F7A*.fd)"
 elif [ $Bios_Version == ${Bios_lcd[1]} ]; then
-	#sudo cp $Bios_File $jupiter_bios${Bios_lcd[1]}"_sign.fd" # For SteamOS 3.5 ~ Stable 
-	sudo cp $Bios_File $jupiter_bios${Bios_lcd[2]}"_sign.fd" # For SteamOS 3.6 
-	#echo "Copy "${Bios_lcd[1]} "Bios File to jupiter_bios ===> "${Bios_lcd[1]}"_sign.fd"
-	echo "Copy "${Bios_lcd[1]} "Bios File to jupiter_bios ===> "${Bios_lcd[2]}"_sign.fd"
-	log "Copying one files"
+	sudo cp $Bios_File $jupiter_bios${Bios_lcd[$latest_lcd]}"_sign.fd" 
+	echo "Copy "${Bios_lcd[$latest_lcd]} "Bios File to jupiter_bios ===> "${Bios_lcd[$latest_lcd]}"_sign.fd"
+	log "Copying files"
 	log "$(sudo ls -l /usr/share/jupiter_bios/F7A*.fd)"
 elif [ $Bios_Version == ${Bios_lcd[2]} ]; then
-	sudo cp $Bios_File $jupiter_bios${Bios_lcd[2]}"_sign.fd" # For SteamOS 3.6 
-	echo "Copy "${Bios_lcd[2]} "Bios File to jupiter_bios ===> "${Bios_lcd[2]}"_sign.fd"
-	log "Copying one files"
+	sudo cp $Bios_File $jupiter_bios${Bios_lcd[$latest_lcd]}"_sign.fd" 
+	echo "Copy "${Bios_lcd[$latest_lcd]} "Bios File to jupiter_bios ===> "${Bios_lcd[$latest_lcd]}"_sign.fd"
+	log "Copying files"
 	log "$(sudo ls -l /usr/share/jupiter_bios/F7A*.fd)"
 elif [ $Bios_Version == ${Bios_lcd[3]} ]; then
-	sudo cp $Bios_File $jupiter_bios${Bios_lcd[3]}"_sign.fd" # For SteamOS 3.6 
-	echo "Copy "${Bios_lcd[3]} "Bios File to jupiter_bios ===> "${Bios_lcd[3]}"_sign.fd"
-	log "Copying one files"
+	sudo cp $Bios_File $jupiter_bios${Bios_lcd[$latest_lcd]}"_sign.fd" 
+	echo "Copy "${Bios_lcd[$latest_lcd]} "Bios File to jupiter_bios ===> "${Bios_lcd[$latest_lcd]}"_sign.fd"
+	log "Copying files"
 	log "$(sudo ls -l /usr/share/jupiter_bios/F7A*.fd)"
 fi
 
 if [ $Bios_Version == ${Bios_oled[0]} ]; then
-	sudo cp $Bios_File $jupiter_bios${Bios_oled[0]}"_sign.fd" # For OLED SteamDeck 3.5.x ~
-	echo "Copy "${Bios_oled[0]} "Bios File to jupiter_bios ===> "${Bios_oled[0]}"_sign.fd"
+	sudo cp $Bios_File $jupiter_bios${Bios_oled[$latest_oled]}"_sign.fd" # For OLED SteamDeck 3.5.x ~
+	echo "Copy "${Bios_oled[$latest_oled]} "Bios File to jupiter_bios ===> "${Bios_oled[$latest_oled]}"_sign.fd"
 	log "Copying one files."
 	log "$(sudo ls -l /usr/share/jupiter_bios/F7G*.fd)"
 fi
