@@ -653,11 +653,9 @@ for ((try = 1; try <= max_download_try; try++)); do
 		rm -rf "$jupiter_tool"
         # Check the device flag to determine which BIOS file to download
         if [ $device_flag == 1 ]; then
-			# Download jupiter-bios-unlock, jupiter-bios-tool
+			# Download jupiter-bios-unlock
 			log "Downloading jupiter_unlock file ==> $jupiter_Unlock_File"
 			wget "${Link_t[0]}" -O "$jupiter_Unlock_File"
-			log "Downloading jupiter_bios_tool file ==> $jupiter_tool"
-			wget "${Link_t[1]}" -O "$jupiter_tool"
             # Download LCD BIOS file
 			log "Downloading Bios File ==> $Bios_File"            
 			wget "${Link_l[$select - 1]}" -O "$Bios_File"
@@ -710,22 +708,22 @@ if [ $device_flag == 1 ];then
 	log "$(sudo ls -l /usr/share/jupiter_bios/) << If count is zero, the delete was successful."
 	echo "Delete Old Bios File From jupiter_bios"
 	if [ $Bios_Version == ${Bios_lcd[0]} ]; then
-		sudo cp $Bios_File $jupiter_bios${Bios_lcd[0]}"_sign.fd" # 
+		sudo cp $Bios_File $jupiter_bios${Bios_lcd[$latest_lcd]}"_sign.fd" # 
 		echo "Copy "${Bios_lcd[0]} "Bios File to jupiter_bios ===> "${Bios_lcd[$latest_lcd]}"_sign.fd"
 		log "Copying files"
 		log "$(sudo ls -l /usr/share/jupiter_bios/F7A*.fd)"
 	elif [ $Bios_Version == ${Bios_lcd[1]} ]; then
-		sudo cp $Bios_File $jupiter_bios${Bios_lcd[1]}"_sign.fd" 
+		sudo cp $Bios_File $jupiter_bios${Bios_lcd[$latest_lcd]}"_sign.fd" 
 		echo "Copy "${Bios_lcd[1]} "Bios File to jupiter_bios ===> "${Bios_lcd[$latest_lcd]}"_sign.fd"
 		log "Copying files"
 		log "$(sudo ls -l /usr/share/jupiter_bios/F7A*.fd)"
 	elif [ $Bios_Version == ${Bios_lcd[2]} ]; then
-		sudo cp $Bios_File $jupiter_bios${Bios_lcd[2]}"_sign.fd" 
+		sudo cp $Bios_File $jupiter_bios${Bios_lcd[$latest_lcd]}"_sign.fd" 
 		echo "Copy "${Bios_lcd[2]} "Bios File to jupiter_bios ===> "${Bios_lcd[$latest_lcd]}"_sign.fd"
 		log "Copying files"
 		log "$(sudo ls -l /usr/share/jupiter_bios/F7A*.fd)"
 	elif [ $Bios_Version == ${Bios_lcd[3]} ]; then
-		sudo cp $Bios_File $jupiter_bios${Bios_lcd[3]}"_sign.fd" 
+		sudo cp $Bios_File $jupiter_bios${Bios_lcd[$latest_lcd]}"_sign.fd" 
 		echo "Copy "${Bios_lcd[3]} "Bios File to jupiter_bios ===> "${Bios_lcd[$latest_lcd]}"_sign.fd"
 		log "Copying files"
 		log "$(sudo ls -l /usr/share/jupiter_bios/F7A*.fd)"
@@ -737,7 +735,7 @@ elif [ $device_flag == 2 ];then
 	log "$(sudo ls -l /usr/share/jupiter_bios/) << If count is zero, the delete was successful."
 	echo "Delete Old Bios File From jupiter_bios"
 	if [ $Bios_Version == ${Bios_oled[0]} ]; then
-		sudo cp $Bios_File $jupiter_bios${Bios_oled[0]}"_sign.fd" # For OLED SteamDeck 3.5.x ~
+		sudo cp $Bios_File $jupiter_bios${Bios_oled[$latest_oled]}"_sign.fd" # For OLED SteamDeck 3.5.x ~
 		echo "Copy "${Bios_oled[0]} "Bios File to jupiter_bios ===> "${Bios_oled[$latest_oled]}"_sign.fd"
 		log "Copying one files."
 		log "$(sudo ls -l /usr/share/jupiter_bios/F7G*.fd)"
