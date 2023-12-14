@@ -44,10 +44,9 @@ done
 # Display a message if all directories already exist
 if [ "$all_exist" = true ]; then
 	echo "All directories already exist."
-fi
 
 # If any directory does not exist, create it
-if [ "$all_exist" = false ]; then
+elif [ "$all_exist" = false ]; then
     # Create each directory
     for directory in "${directories[@]}"; do
         if [ ! -d "$directory" ]; then
@@ -80,25 +79,27 @@ Bios_Size_o=17778936   # bios file size (OLED)
 
 # Define the array used 
 
-# 0 - 110 Bios, 1 - 116 Bios, 2 - 118 Bios, 3 - 119 Bios
+# 0 - 110 Bios, 1 - 116 Bios, 2 - 118 Bios, 3 - 119 Bios, 4 - 120 Bios
 # LCD Bios File https://gitlab.com/evlaV/jupiter-PKGBUILD#valve-official-steam-deck-jupiter-release-bios-database
 
 # SD Unlocker is removed
 Link_l=("https://gitlab.com/evlaV/jupiter-hw-support/-/raw/0660b2a5a9df3bd97751fe79c55859e3b77aec7d/usr/share/jupiter_bios/F7A0110_sign.fd"
 "https://gitlab.com/evlaV/jupiter-hw-support/-/raw/38f7bdc2676421ee11104926609b4cc7a4dbc6a3/usr/share/jupiter_bios/F7A0116_sign.fd"
 "https://gitlab.com/evlaV/jupiter-hw-support/-/raw/f79ccd15f68e915cc02537854c3b37f1a04be9c3/usr/share/jupiter_bios/F7A0118_sign.fd"
-"https://gitlab.com/evlaV/jupiter-hw-support/-/raw/bc5ca4c3fc739d09e766a623efd3d98fac308b3e/usr/share/jupiter_bios/F7A0119_sign.fd")
+"https://gitlab.com/evlaV/jupiter-hw-support/-/raw/bc5ca4c3fc739d09e766a623efd3d98fac308b3e/usr/share/jupiter_bios/F7A0119_sign.fd"
+"https://gitlab.com/evlaV/jupiter-hw-support/-/raw/a43e38819ba20f363bdb5bedcf3f15b75bf79323/usr/share/jupiter_bios/F7A0120_sign.fd")
 
-# 0 - 105 Bios 
+# 0 - 105 Bios, 1 - 107 Bios
 # OLED Bios File https://gitlab.com/evlaV/jupiter-PKGBUILD#steam-deck-oled-galileo-f7g-release-bios
-Link_o=("https://gitlab.com/evlaV/jupiter-hw-support/-/raw/332fcc2fbfcb3a2a31bba5363c0b22cdc1f66822/usr/share/jupiter_bios/F7G0105_sign.fd")
+Link_o=("https://gitlab.com/evlaV/jupiter-hw-support/-/raw/332fcc2fbfcb3a2a31bba5363c0b22cdc1f66822/usr/share/jupiter_bios/F7G0105_sign.fd"
+"https://gitlab.com/evlaV/jupiter-hw-support/-/raw/a43e38819ba20f363bdb5bedcf3f15b75bf79323/usr/share/jupiter_bios/F7G0107_sign.fd")
 
 Link_t=("https://gitlab.com/evlaV/jupiter-PKGBUILD/-/raw/master/bin/jupiter-bios-unlock" 
 "https://gitlab.com/evlaV/jupiter-PKGBUILD/-/raw/master/jupiter-bios-tool.py?inline=false")
 
 # supported bios list
-Bios_lcd=("F7A0110" "F7A0116" "F7A0118" "F7A0119")
-Bios_oled=("F7G0105")
+Bios_lcd=("F7A0110" "F7A0116" "F7A0118" "F7A0119" "F7A0120")
+Bios_oled=("F7G0105" "F7G0107")
 
 # jupiter-bios-tool menu list
 jupiter_tool_menu=("BACKUP_UID_TO_FILE" "GENERATE_UID_TO_FILE" "INJECT_UID_FROM_FILE" "REMOVE_UID_FROM_FILE" "TRIMMING" "ANALYZE/VERIFY_FILE" "CONTINUE" "TERMINATE" "HELP" "RUN SCRIPT DIRECTLY")
@@ -477,7 +478,8 @@ select_bios () {
 echo "           Select Bios Version" 
 if [ $device_flag == 1 ];then
 	latest_notice=${Bios_lcd[$latest_lcd]}
-	echo "[1] " ${Bios_lcd[0]} " [2] " ${Bios_lcd[1]} " [3] " ${Bios_lcd[2]} " [4] " ${Bios_lcd[3]} 
+	echo "[1] " ${Bios_lcd[0]} " [2] " ${Bios_lcd[1]} " [3] " ${Bios_lcd[2]}
+	echo "[4] " ${Bios_lcd[3]} " [5] " ${Bios_lcd[4]} 
 	read -p "==> " select
 	if [[ $select =~ ^[1-9]$ ]]; then
 		if [ $select == "1" ]; then
@@ -492,6 +494,9 @@ if [ $device_flag == 1 ];then
 		elif [ $select == "4" ]; then
 			Bios_Version=${Bios_lcd[3]}
 			log "$Bios_Version Bios select"
+		elif [ $select == "5" ]; then
+			Bios_Version=${Bios_lcd[4]}
+			log "$Bios_Version Bios select"
 		else
 			log "Decline Bios Select: $select" 
 			echo "Process terminated"
@@ -505,12 +510,15 @@ if [ $device_flag == 1 ];then
 fi	
 elif [ $device_flag == 2 ];then
 	latest_notice=${Bios_oled[$latest_oled]}
-	echo "[1] " ${Bios_oled[0]} 
+	echo "[1] " ${Bios_oled[0]} " [2] " ${Bios_oled[1]} 
 	read -p "==> " select
 	if [[ $select =~ ^[1-9]$ ]]; then
 		if [ $select == "1" ]; then
 			Bios_Version=${Bios_oled[0]}
-			log "$Bios_Version Bios select" 
+			log "$Bios_Version Bios select"
+		elif [ $select == "2" ]; then
+			Bios_Version=${Bios_oled[1]}
+			log "$Bios_Version Bios select"	 
 		else
 			log "Decline Bios Select: $select" 
 			echo "Process terminated"
@@ -727,6 +735,11 @@ if [ $device_flag == 1 ];then
 		echo "Copy "${Bios_lcd[3]} "Bios File to jupiter_bios ===> "${Bios_lcd[$latest_lcd]}"_sign.fd"
 		log "Copying files"
 		log "$(sudo ls -l /usr/share/jupiter_bios/F7A*.fd)"
+	elif [ $Bios_Version == ${Bios_lcd[4]} ]; then
+		sudo cp $Bios_File $jupiter_bios${Bios_lcd[$latest_lcd]}"_sign.fd" 
+		echo "Copy "${Bios_lcd[4]} "Bios File to jupiter_bios ===> "${Bios_lcd[$latest_lcd]}"_sign.fd"
+		log "Copying files"
+		log "$(sudo ls -l /usr/share/jupiter_bios/F7A*.fd)"
 	fi
 
 elif [ $device_flag == 2 ];then
@@ -737,6 +750,11 @@ elif [ $device_flag == 2 ];then
 	if [ $Bios_Version == ${Bios_oled[0]} ]; then
 		sudo cp $Bios_File $jupiter_bios${Bios_oled[$latest_oled]}"_sign.fd" # For OLED SteamDeck 3.5.x ~
 		echo "Copy "${Bios_oled[0]} "Bios File to jupiter_bios ===> "${Bios_oled[$latest_oled]}"_sign.fd"
+		log "Copying one files."
+		log "$(sudo ls -l /usr/share/jupiter_bios/F7G*.fd)"
+	elif [ $Bios_Version == ${Bios_oled[1]} ]; then
+		sudo cp $Bios_File $jupiter_bios${Bios_oled[$latest_oled]}"_sign.fd" # For OLED SteamDeck 3.5.x ~
+		echo "Copy "${Bios_oled[1]} "Bios File to jupiter_bios ===> "${Bios_oled[$latest_oled]}"_sign.fd"
 		log "Copying one files."
 		log "$(sudo ls -l /usr/share/jupiter_bios/F7G*.fd)"
 	fi
