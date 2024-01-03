@@ -10,12 +10,12 @@ COLOR_3="\033[1;33m"
 COLOR_END="\033[0m"
 
 # Define the folders to use
-default_dir="/home/deck/macchiato"
+default_dir="$HOME/macchiato"
 original_bios_dir="$default_dir/original_bios"
 bakup_bios_dir="$default_dir/backup_bios"
 tool_dir="$default_dir/tools"
 log_dir="$default_dir/logs"
-jupiter_bios=/usr/share/jupiter_bios/
+jupiter_bios="/usr/share/jupiter_bios/"
 
 # Define the folders used by jupiter-bios-tool
 modified_bios_dir="$default_dir/modified_bios"
@@ -56,7 +56,7 @@ elif [ "$all_exist" = false ]; then
     done
 fi
 
-chown -R deck:deck $default_dir
+#sudo chown -R $LOGNAME:$LOGNAME $default_dir
 chmod -R 755 $default_dir
 
 # Define the files to use
@@ -156,7 +156,7 @@ if [[ "${Current_Bios_Version}" == *"F7A"* ]] || [ "$apu_name" == "Aerith" ]; th
 elif [[ "${Current_Bios_Version}" == *"F7G"* ]] || [ "$apu_name" == "Sephiroth" ]; then
 	current_device=${Device_List[1]}
 	echo -e "\nYour device is ${current_device}."
-	echo -e "${current_device} models are still in testing.\n"
+	echo -e "\n"
 	log "Device is ${current_device}"
 	device_flag=2
 	#exit 0
@@ -408,7 +408,7 @@ unset $find_result
 
 
 echo -e "\n"
-echo -e "Search the /home/deck/macchiato directory for files with the .rom, .fd, .bin extensions.\n"
+echo -e "Search the $HOME/macchiato directory for files with the .rom, .fd, .bin extensions.\n"
 echo -e "Reslut\n"
 
 # Find bios files with .rom, .fd, .bin extensions
