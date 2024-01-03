@@ -10,7 +10,7 @@ COLOR_3="\033[1;33m"
 COLOR_END="\033[0m"
 
 # Define the folders to use
-default_dir="$HOME/macchiato"
+default_dir="/home/deck/macchiato"
 original_bios_dir="$default_dir/original_bios"
 bakup_bios_dir="$default_dir/backup_bios"
 tool_dir="$default_dir/tools"
@@ -408,7 +408,7 @@ unset $find_result
 
 
 echo -e "\n"
-echo -e "Search the $HOME/macchiato directory for files with the .rom, .fd, .bin extensions.\n"
+echo -e "Search the /home/deck/macchiato directory for files with the .rom, .fd, .bin extensions.\n"
 echo -e "Reslut\n"
 
 # Find bios files with .rom, .fd, .bin extensions
