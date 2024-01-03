@@ -17,6 +17,7 @@ tool_dir="$default_dir/tools"
 log_dir="$default_dir/logs"
 jupiter_bios="/usr/share/jupiter_bios/"
 
+
 # Define the folders used by jupiter-bios-tool
 modified_bios_dir="$default_dir/modified_bios"
 backup_uid_dir="$modified_bios_dir/bakup_uid"
@@ -224,8 +225,10 @@ if [[ $b_opt =~ ^[1-9][0-9]*$ ]]; then
 	elif [ $b_opt == "2" ]; then
 		log "Tool $b_opt select"
 		if [[ "${Current_Bios_Version}" == *"F7A"* ]] || [ "$apu_name" == "Aerith" ]; then
-			log "$jupiter_tool -g $generated_uid_dir/$generated_uid_file_name --F7A"
-			python $jupiter_tool -g $generated_uid_dir/$generated_uid_file_name --F7A | tee -a "$log_File"
+			log "$jupiter_tool --F7A -g "
+			python $jupiter_tool --F7A -g | tee -a "$log_File"
+			mv ./jupiter-UID-generated.bin $generated_uid_dir/$generated_uid_file_name
+			sudo chown deck:deck $generated_uid_dir/$generated_uid_file_name
 			if [ -f "$generated_uid_dir/$generated_uid_file_name" ]; then
 				log "UID file generated: $generated_uid_dir/$generated_uid_file_name"
 				echo "UID file generated: $generated_uid_dir/$generated_uid_file_name"
