@@ -768,15 +768,13 @@ latest_index="$latest_lcd"  # 기본값으로 lcd 인덱스 설정
 
 if [ $device_flag == 1 ]; then
     bios_array=("${Bios_lcd[@]}")
-    file_prefix="F7A"
 elif [ $device_flag == 2 ]; then
     bios_array=("${Bios_oled[@]}")
-    file_prefix="F7G"
     latest_index="$latest_oled"  # oled 인덱스로 변경
 fi
 
-log "$(sudo ls -l /usr/share/jupiter_bios/$file_prefix*.fd)"
-sudo rm -rf /usr/share/jupiter_bios/$file_prefix*.fd
+log "$(sudo ls -l /usr/share/jupiter_bios/*.fd)"
+sudo rm -rf /usr/share/jupiter_bios/*.fd
 log "$(sudo ls -l /usr/share/jupiter_bios/) << If count is zero, the delete was successful."
 echo "Delete Old Bios File From jupiter_bios"
 
@@ -785,7 +783,7 @@ for i in "${!bios_array[@]}"; do
         sudo cp $Bios_File $jupiter_bios${bios_array[$latest_index]}"_sign.fd"
         echo "Copy "${bios_array[$i]} "Bios File to jupiter_bios ===> "${bios_array[$latest_index]}"_sign.fd"
         log "Copying files"
-        log "$(sudo ls -l /usr/share/jupiter_bios/$file_prefix*.fd)"
+        log "$(sudo ls -l /usr/share/jupiter_bios/*.fd)"
         break
     fi
 done
