@@ -150,7 +150,7 @@ echo -e "Run Time: $(date "+%Y-%m-%d %H:%M:%S")\n" >> $log_File
 
 
 check_model() {
-    # 확인할 BIOS 버전 문자열과 APU 이름 및 해당하는 장치 플래그
+    # the BIOS version string to check and the APU name and corresponding device flags
     declare -A check_conditions=(
         ["F7A"]="Aerith"
         ["F7G"]="Sephiroth"
@@ -201,7 +201,7 @@ echo -e "     Select the jupiter Bios Tool Option\n"
 local menu_count=${#jupiter_tool_menu[@]}
 local max_length=0
 
-# 가장 긴 메뉴 항목의 길이를 찾습니다.
+# Find the length of the longest menu item.
 for item in "${jupiter_tool_menu[@]}"; do
 	if [ ${#item} -gt $max_length ]; then
 		max_length=${#item}
@@ -210,19 +210,20 @@ done
 
 # 메뉴 항목을 출력합니다.
 for (( i=0; i<$menu_count; i++ )); do
-	# `-t` 옵션이 주어졌을 때 7번 메뉴를 "NOT USED"로 표시합니다.
+	# Display menu 7 as "NOT USED" when the `-t` option is given.
 	if [ $use_tool -eq 1 ] && [ $((i + 1)) -eq 7 ]; then
 		printf "[%d] %-${max_length}s   " "7" "NOT USED"
-		# 8번 메뉴를 건너뛰지 않도록 i 값을 증가시키지 않습니다.
 	else
+		# Do not increment the value of i to avoid skipping menu 8.
 		printf "[%d] %-${max_length}s   " $((i + 1)) "${jupiter_tool_menu[$i]}"
-		# 다음 메뉴 항목이 있을 경우 줄을 바꿉니다.
+		# replace the line with the next menu item, if any.
 		if [ $((i % 2)) -eq 1 ]; then
 			echo ""
 		fi
 	fi
 done
-# 마지막 줄이 출력되지 않은 경우 줄을 바꿉니다.
+
+# If the last line is not printed, replace the line.
 if [ $((menu_count % 2)) -eq 1 ]; then
 	echo ""
 fi
@@ -236,18 +237,10 @@ jupiter_tool () {
 
 jupiter_tool_menu_display
 
-    
-#if [[ $b_opt =~ ^[1-9][0-9]*$ ]]; then
 case $b_opt in
-	#if [ $b_opt == "1" ]; then
 	1)
 		log "Tool $b_opt select"
-			#if [ -f $Backup_Bios_File ]; then
-			#	log "${Backup_Bios_File}"
-			#	selected_bios=${Backup_Bios_File}
-			#else
 		find_bios_file
-			#fi
 		log "$jupiter_tool $selected_bios -b $backup_uid_dir/$backup_uid_file_name"
 		python $jupiter_tool $selected_bios -b $backup_uid_dir/$backup_uid_file_name | tee -a "$log_File"
 		if [ -f "$backup_uid_dir/$backup_uid_file_name" ]; then
@@ -262,7 +255,6 @@ case $b_opt in
 		return
 		;;
 
-	#elif [ $b_opt == "2" ]; then
 	2)
 		log "Tool $b_opt select"
 		if [[ "${Current_Bios_Version}" == *"F7A"* ]] || [ "$apu_name" == "Aerith" ]; then
@@ -293,7 +285,6 @@ case $b_opt in
 		return
 		;;
 
-	#elif [ $b_opt == "3" ]; then
 	3)
 		log "Tool $b_opt select"
 		find_bios_file
@@ -310,7 +301,6 @@ case $b_opt in
 		return
 		;;
 
-	#elif [ $b_opt == "4" ]; then
 	4)
 		log "Tool $b_opt select"
 		find_bios_file
@@ -327,7 +317,6 @@ case $b_opt in
 		return
 		;;
 
-	#elif [ $b_opt == "5" ]; then
 	5)
 		log "Tool $b_opt select"
 		find_bios_file
@@ -344,7 +333,6 @@ case $b_opt in
 		return
 		;;
 
-	#elif [ $b_opt == "6" ]; then
 	6)
 		log "Tool $b_opt select"
 		find_bios_file
@@ -354,7 +342,6 @@ case $b_opt in
 		return
 		;;
 
-	#elif [ $b_opt == "7" ]; then
 	7)
 		log "Tool $b_opt select"
 		if [ $use_tool == 1 ]; then
@@ -368,7 +355,6 @@ case $b_opt in
 		fi
 		;;
 
-	#elif [ $b_opt == "8" ]; then
 	8)
 		log "Tool $b_opt select"
 		log "jupiter bios tool terminated"
@@ -376,7 +362,6 @@ case $b_opt in
 		exit 0
 		;;
 
-	#elif [ $b_opt == "9" ]; then
 	9)
 		log "Tool $b_opt select"
 		python $jupiter_tool -h
@@ -385,7 +370,6 @@ case $b_opt in
 		return
 		;;
 
-	#elif [ $b_opt == "10" ]; then
 	10)
 		log "Tool $b_opt select"
 		echo ""
@@ -551,15 +535,16 @@ select_bios () {
         return
     fi
 
-    # 출력 형식을 조정합니다.
     for i in "${!bios_array[@]}"; do
         echo -n "[$((i + 1))] ${bios_array[i]}   "
         let count+=1
         if [ $((count % 3)) -eq 0 ]; then
-            echo ""  # 3개의 항목이 출력되면 새로운 줄로 이동합니다.
+            # print 3 items and move to a new line.
+			echo ""
         fi
     done
-    echo ""  # 마지막 줄바꿈
+    echo ""
+	# Wrap last line
 
     read -p "==> " select
 
@@ -568,13 +553,15 @@ select_bios () {
         log "$Bios_Version Bios select"
     else
         if [[ $select =~ ^[0-9]+$ ]]; then
-            echo -e "\nInvalid selection. Please enter a valid index.\n"
-            select_bios  # 숫자를 입력했지만 유효하지 않은 경우, 함수를 다시 호출합니다.
+            # If a number is entered but invalid, call the select_bios function again.
+			echo -e "\nInvalid selection. Please enter a valid index.\n"
+            select_bios
         else
+			# If character is entered, end the script.
             log "Decline Bios Select: $select" 
         	echo "Process terminated"
        		echo "No change to bios"
-        	exit 1  # 문자를 입력한 경우, 스크립트를 종료합니다.
+        	exit 1  
         fi
     fi
 }
@@ -763,13 +750,14 @@ fi
 sudo steamos-readonly disable
 log "Steam OS Read Only: Disable"
 
-latest_index="$latest_lcd"  # 기본값으로 lcd 인덱스 설정
+# Set LCD indexes to default
+latest_index="$latest_lcd"
 
 if [ $device_flag == 1 ]; then
     bios_array=("${Bios_lcd[@]}")
 elif [ $device_flag == 2 ]; then
     bios_array=("${Bios_oled[@]}")
-    latest_index="$latest_oled"  # oled 인덱스로 변경
+    latest_index="$latest_oled"
 fi
 
 log "$(sudo ls -l /usr/share/jupiter_bios/*.fd)"
