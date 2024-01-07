@@ -150,6 +150,7 @@ echo -e "Run Time: $(date "+%Y-%m-%d %H:%M:%S")\n" >> $log_File
 
 
 check_model() {
+
     # the BIOS version string to check and the APU name and corresponding device flags
     declare -A check_conditions=(
         ["F7A"]="Aerith"
@@ -176,6 +177,7 @@ check_model() {
     echo "Failed to Check (Unknown Device)"
     log "Failed to Check (Unknown Device)"
     exit 1
+
 }
 
 jupiter_tool_menu_display() {
@@ -758,6 +760,7 @@ if [ $device_flag == 1 ]; then
 elif [ $device_flag == 2 ]; then
     bios_array=("${Bios_oled[@]}")
     latest_index="$latest_oled"
+
 fi
 
 log "$(sudo ls -l /usr/share/jupiter_bios/*.fd)"
