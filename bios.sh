@@ -10,14 +10,14 @@ COLOR_3="\033[1;33m"
 COLOR_END="\033[0m"
 
 if [[ "${HOME}" == *"root"* ]]; then
-	echo "Your home directory is set to root."
+	echo "Your home directory is set to root. ($HOME)"
 	echo "Instead, use this method to run"
-	echo -e ">> $COLOR_3 sudo -u deck sh bios.sh $COLOR_END"
+	echo -e ">> $COLOR_3 sudo$COLOR_END$COLOR_2 -u deck$COLOR_END$COLOR_3 sh bios.sh $COLOR_END"
 	exit 1
 fi
 
 # Define the folders to use
-default_dir="/home/deck/macchiato"
+default_dir="$HOME/macchiato"
 original_bios_dir="$default_dir/original_bios"
 bakup_bios_dir="$default_dir/backup_bios"
 tool_dir="$default_dir/tools"
@@ -443,8 +443,7 @@ sudo /usr/share/jupiter_bios_updater/h2offt $Backup_Bios_File -O
 	else
 		log "Failed to create Bios Backup File"
 		echo "Failed to create Bios Backup File"
-	fi
-fi
+	fi 
 echo -e "Ending a bios backup\n"
 echo -e "\n======================================\n"
 }
@@ -469,7 +468,7 @@ unset $find_result
 
 
 echo -e "\n"
-echo -e "Search the /home/deck/macchiato directory for files with the .rom, .fd, .bin extensions.\n"
+echo -e "Search the $HOME/macchiato directory for files with the .rom, .fd, .bin extensions.\n"
 echo -e "Result\n"
 
 # Find bios files with .rom, .fd, .bin extensions
@@ -794,4 +793,4 @@ log "Steam OS Read Only: Enable"
 log "$(sudo /usr/share/jupiter_bios_updater/h2offt -SC)"
 log "Bios information to update.. [ Update to $Bios_Version, Use File: $Bios_File ]"
 # If you're debugging, comment out the following lines (to save testing time)
-#sudo /usr/share/jupiter_bios_updater/h2offt $Bios_File
+sudo /usr/share/jupiter_bios_updater/h2offt $Bios_File
