@@ -430,6 +430,7 @@ sudo /usr/share/jupiter_bios_updater/h2offt $Backup_Bios_File -O
 		log "Failed to create Bios Backup File"
 		echo "Failed to create Bios Backup File"
 	fi 
+ fi
 echo -e "Ending a bios backup\n"
 echo -e "\n======================================\n"
 }
