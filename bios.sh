@@ -84,7 +84,7 @@ Bios_Size_o=17778936   # bios file size (OLED)
 
 # Define the array used 
 
-# 0 - 110 Bios, 1 - 116 Bios, 2 - 118 Bios, 3 - 119 Bios, 4 - 120 Bios
+# 0 - 110 Bios, 1 - 116 Bios, 2 - 118 Bios, 3 - 119 Bios, 4 - 120 Bios, 5 - 121 Bios
 # LCD Bios File https://gitlab.com/evlaV/jupiter-PKGBUILD#valve-official-steam-deck-jupiter-release-bios-database
 
 # SD Unlocker is removed
@@ -92,19 +92,21 @@ Link_l=("https://gitlab.com/evlaV/jupiter-hw-support/-/raw/0660b2a5a9df3bd97751f
 "https://gitlab.com/evlaV/jupiter-hw-support/-/raw/38f7bdc2676421ee11104926609b4cc7a4dbc6a3/usr/share/jupiter_bios/F7A0116_sign.fd"
 "https://gitlab.com/evlaV/jupiter-hw-support/-/raw/f79ccd15f68e915cc02537854c3b37f1a04be9c3/usr/share/jupiter_bios/F7A0118_sign.fd"
 "https://gitlab.com/evlaV/jupiter-hw-support/-/raw/bc5ca4c3fc739d09e766a623efd3d98fac308b3e/usr/share/jupiter_bios/F7A0119_sign.fd"
-"https://gitlab.com/evlaV/jupiter-hw-support/-/raw/a43e38819ba20f363bdb5bedcf3f15b75bf79323/usr/share/jupiter_bios/F7A0120_sign.fd")
+"https://gitlab.com/evlaV/jupiter-hw-support/-/raw/a43e38819ba20f363bdb5bedcf3f15b75bf79323/usr/share/jupiter_bios/F7A0120_sign.fd"
+"https://gitlab.com/evlaV/jupiter-hw-support/-/raw/7ffc22a4dc083c005e26676d276bdbd90dd1de5e/usr/share/jupiter_bios/F7A0121_sign.fd")
 
-# 0 - 105 Bios, 1 - 107 Bios
+# 0 - 105 Bios, 1 - 107 Bios, 2 - 109 Bios
 # OLED Bios File https://gitlab.com/evlaV/jupiter-PKGBUILD#steam-deck-oled-galileo-f7g-release-bios
 Link_o=("https://gitlab.com/evlaV/jupiter-hw-support/-/raw/332fcc2fbfcb3a2a31bba5363c0b22cdc1f66822/usr/share/jupiter_bios/F7G0105_sign.fd"
-"https://gitlab.com/evlaV/jupiter-hw-support/-/raw/a43e38819ba20f363bdb5bedcf3f15b75bf79323/usr/share/jupiter_bios/F7G0107_sign.fd")
+"https://gitlab.com/evlaV/jupiter-hw-support/-/raw/a43e38819ba20f363bdb5bedcf3f15b75bf79323/usr/share/jupiter_bios/F7G0107_sign.fd"
+"https://gitlab.com/evlaV/jupiter-hw-support/-/raw/7ffc22a4dc083c005e26676d276bdbd90dd1de5e/usr/share/jupiter_bios/F7G0109_sign.fd")
 
 Link_t=("https://gitlab.com/evlaV/jupiter-PKGBUILD/-/raw/master/bin/jupiter-bios-unlock" 
 "https://gitlab.com/evlaV/jupiter-PKGBUILD/-/raw/master/jupiter-bios-tool.py?inline=false")
 
 # supported bios list
-Bios_lcd=("F7A0110" "F7A0116" "F7A0118" "F7A0119" "F7A0120")
-Bios_oled=("F7G0105" "F7G0107")
+Bios_lcd=("F7A0110" "F7A0116" "F7A0118" "F7A0119" "F7A0120" "F7A0121")
+Bios_oled=("F7G0105" "F7G0107" "F7G0109")
 
 # jupiter-bios-tool menu list
 jupiter_tool_menu=("BACKUP_UID_TO_FILE" "GENERATE_UID_TO_FILE" "INJECT_UID_FROM_FILE" "REMOVE_UID_FROM_FILE" "TRIMMING" "ANALYZE/VERIFY_FILE" "CONTINUE" "TERMINATE" "HELP" "RUN SCRIPT DIRECTLY")
